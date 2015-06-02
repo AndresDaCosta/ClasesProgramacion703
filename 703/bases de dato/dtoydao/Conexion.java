@@ -3,6 +3,7 @@ package dtoydao;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.Savepoint;
 import java.sql.Statement;
 
 
@@ -11,7 +12,7 @@ public class Conexion {
 	Connection conn = null;
 	ResultSet rset = null;
 	Statement stmt = null;
-	
+	Savepoint punto = null;
 	public Connection establecerconn() {
 		
 		try {
@@ -21,7 +22,9 @@ public class Conexion {
 			conn = DriverManager.getConnection ("jdbc:oracle:thin:@localhost:1521:xe", "HR", "medaigual");
 			
 			stmt = conn.createStatement();
-			
+			conn.setAutoCommit(false);
+			punto = conn.setSavepoint();
+			conn.commit();
 			rset = stmt.executeQuery("select * from employees where  salary > 3000");
 			
 			return conn;
